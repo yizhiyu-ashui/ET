@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using ETModel;
+
 using UnityEditor;
 
-namespace ETEditor
+namespace ET
 {
 	[Flags]
 	public enum HeadFlag
@@ -18,7 +18,7 @@ namespace ETEditor
 	public static class InnerProto2CS
 	{
 		private const string protoPath = "../Proto/";
-		private const string serverMessagePath = "../Server/Hotfix/Module/Message/";
+		private const string serverMessagePath = "../Server/Model/Module/Message/";
 		private static readonly char[] splitChars = { ' ', '\t' };
 		private static readonly List<OpcodeInfo> msgOpcode = new List<OpcodeInfo>();
 		
@@ -26,8 +26,8 @@ namespace ETEditor
 		public static void Proto2CS()
 		{
 			msgOpcode.Clear();
-			Proto2CS("ETHotfix", "InnerMessage.proto", serverMessagePath, "InnerOpcode", 1000);
-			GenerateOpcode("ETHotfix", "InnerOpcode", serverMessagePath);
+			Proto2CS("ETModel", "InnerMessage.proto", serverMessagePath, "InnerOpcode", 1000);
+			GenerateOpcode("ETModel", "InnerOpcode", serverMessagePath);
 
 			AssetDatabase.Refresh();
 		}
@@ -41,7 +41,7 @@ namespace ETEditor
 			string s = File.ReadAllText(proto);
 
 			StringBuilder sb = new StringBuilder();
-			sb.Append("using ETModel;\n");
+			sb.Append("\n");
 			sb.Append("using System.Collections.Generic;\n");
 			sb.Append($"namespace {ns}\n");
 			sb.Append("{\n");
@@ -78,7 +78,7 @@ namespace ETEditor
 					
 					sb.Append($"\t[Message({opcodeClassName}.{msgName})]\n");
 					sb.Append($"\tpublic partial class {msgName}");
-					if (parentClass == "IActorMessage" || parentClass == "IActorRequest" || parentClass == "IActorResponse" || parentClass == "IFrameMessage")
+					if (parentClass == "IActorMessage" || parentClass == "IActorRequest" || parentClass == "IActorResponse")
 					{
 						sb.Append($": {parentClass}\n");
 					}
